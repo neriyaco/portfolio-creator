@@ -11,7 +11,8 @@ export default function LogoSection({ logo }: Props) {
       <img
         src={logo.url}
         alt={logo.alt ?? 'Logo'}
-        className="max-h-16 max-w-[200px] w-auto object-contain"
+        className="max-w-[200px] w-auto object-contain"
+        style={{ maxHeight: logo.maxHeight ?? 64 }}
       />
     </div>
   )

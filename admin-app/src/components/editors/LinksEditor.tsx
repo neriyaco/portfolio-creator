@@ -15,9 +15,10 @@ export default function LinksEditor() {
   }, [config])
 
   function addLink() {
+    const defaultColor = config?.theme?.primaryColor ?? '#3b82f6'
     setLinks([
       ...links,
-      { id: crypto.randomUUID(), label: '', url: '', icon: 'Link', visible: true },
+      { id: crypto.randomUUID(), label: '', url: '', icon: 'Link', color: defaultColor, visible: true },
     ])
   }
 
@@ -80,7 +81,7 @@ export default function LinksEditor() {
               </label>
               <input
                 type="color"
-                value={link.color ?? '#3b82f6'}
+                value={link.color ?? config?.theme?.primaryColor ?? '#3b82f6'}
                 onChange={(e) => updateLink(link.id, { color: e.target.value })}
                 title="Button color"
                 className="w-8 h-8 rounded border border-gray-300 cursor-pointer p-0.5"

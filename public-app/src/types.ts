@@ -30,6 +30,7 @@ export interface Logo {
   resourceId?: string
   url?: string
   alt?: string
+  maxHeight?: number
 }
 
 export interface SiteConfig {

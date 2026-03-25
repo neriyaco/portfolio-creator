@@ -59,7 +59,7 @@ export default function LogoEditor() {
         }
       }
 
-      const newLogo: Logo = { resourceId, url: `/media/${filename}`, alt }
+      const newLogo: Logo = { resourceId, url: `/media/${filename}`, alt, maxHeight: logo.maxHeight }
       await saveSection('logo', newLogo)
       setLogo(newLogo)
       setStatus('success')
@@ -70,7 +70,7 @@ export default function LogoEditor() {
     }
   }
 
-  async function handleAltSave() {
+  async function handleMetaSave() {
     if (!logo.resourceId) return
     setStatus('uploading')
     try {
@@ -82,6 +82,8 @@ export default function LogoEditor() {
     }
   }
 
+  const maxHeight = logo.maxHeight ?? 64
+
   return (
     <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
       <h2 className="text-lg font-semibold mb-4 text-gray-800">Logo</h2>
@@ -90,7 +92,8 @@ export default function LogoEditor() {
           <img
             src={logo.url}
             alt={logo.alt ?? 'Logo'}
-            className="max-h-20 max-w-xs object-contain border border-gray-100 rounded-lg p-2"
+            className="max-w-xs object-contain border border-gray-100 rounded-lg p-2"
+            style={{ maxHeight }}
           />
         )}
         <div>
@@ -106,27 +109,41 @@ export default function LogoEditor() {
               disabled={status === 'uploading'}
             />
           </label>
-          {status === 'success' && <span className="ml-3 text-sm text-green-600">Uploaded!</span>}
+          {status === 'success' && <span className="ml-3 text-sm text-green-600">Saved!</span>}
           {errorMsg && <p className="mt-1 text-sm text-red-600">{errorMsg}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium mb-1 text-gray-700">Alt text</label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={alt}
-              onChange={(e) => setAlt(e.target.value)}
-              placeholder="Your name or brand"
-              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              onClick={handleAltSave}
-              disabled={!logo.resourceId || status === 'uploading'}
-              className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
-            >
-              Save
-            </button>
-          </div>
+          <input
+            type="text"
+            value={alt}
+            onChange={(e) => setAlt(e.target.value)}
+            placeholder="Your name or brand"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1 text-gray-700">
+            Display height <span className="font-normal text-gray-500">{maxHeight}px</span>
+          </label>
+          <input
+            type="range"
+            min={24}
+            max={200}
+            step={4}
+            value={maxHeight}
+            onChange={(e) => setLogo((prev) => ({ ...prev, maxHeight: Number(e.target.value) }))}
+            className="w-full accent-blue-600"
+          />
+        </div>
+        <div>
+          <button
+            onClick={handleMetaSave}
+            disabled={!logo.resourceId || status === 'uploading'}
+            className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
+          >
+            Save
+          </button>
         </div>
       </div>
     </section>

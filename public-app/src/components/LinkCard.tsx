@@ -21,7 +21,7 @@ export default function LinkCard({ link }: Props) {
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-medium transition-opacity hover:opacity-80 shadow-sm"
+      className="flex items-center justify-center gap-3 w-full px-5 py-4 rounded-xl font-medium transition-opacity hover:opacity-80 shadow-sm"
       style={{ backgroundColor: link.color ?? 'var(--color-primary)', color: '#ffffff' }}
     >
       <Icon size={20} />

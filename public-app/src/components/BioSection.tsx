@@ -15,9 +15,10 @@ export default function BioSection({ bio }: Props) {
       )}
       {bio.tagline && <p className="text-lg mb-3 opacity-70">{bio.tagline}</p>}
       {bio.body && (
-        <p className="text-base leading-relaxed max-w-prose mx-auto opacity-80 whitespace-pre-wrap">
-          {bio.body}
-        </p>
+        <div
+          className="text-base leading-relaxed max-w-prose mx-auto opacity-80 bio-body"
+          dangerouslySetInnerHTML={{ __html: bio.body }}
+        />
       )}
     </div>
   )

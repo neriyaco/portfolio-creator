@@ -1,4 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useEditor, EditorContent } from '@tiptap/react'
+import StarterKit from '@tiptap/starter-kit'
+import Link from '@tiptap/extension-link'
+import { Bold, Italic, List, ListOrdered, Link as LinkIcon } from 'lucide-react'
 import { useConfig } from '../../hooks/useConfig'
 import type { Bio } from '../../types'
 
@@ -8,10 +12,26 @@ export default function BioEditor() {
   const { config, saveSection } = useConfig()
   const [bio, setBio] = useState<Bio>({ name: '', tagline: '', body: '' })
   const [status, setStatus] = useState<SaveStatus>('idle')
+  const configLoaded = useRef(false)
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Link.configure({ openOnClick: false, autolink: true }),
+    ],
+    content: '',
+    onUpdate: ({ editor }) => {
+      setBio((prev) => ({ ...prev, body: editor.getHTML() }))
+    },
+  })
 
   useEffect(() => {
-    if (config?.bio) setBio(config.bio)
-  }, [config])
+    if (config?.bio && !configLoaded.current) {
+      configLoaded.current = true
+      setBio(config.bio)
+      editor?.commands.setContent(config.bio.body ?? '')
+    }
+  }, [config, editor])
 
   async function handleSave() {
     setStatus('saving')
@@ -22,6 +42,18 @@ export default function BioEditor() {
     } catch {
       setStatus('error')
       setTimeout(() => setStatus('idle'), 3000)
+    }
+  }
+
+  function handleLink() {
+    if (!editor) return
+    const current = editor.getAttributes('link').href as string | undefined
+    const url = window.prompt('Link URL', current ?? '')
+    if (url === null) return
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run()
+    } else {
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
     }
   }
 
@@ -49,12 +81,48 @@ export default function BioEditor() {
         </div>
         <div>
           <label className="block text-sm font-medium mb-1 text-gray-700">Body</label>
-          <textarea
-            rows={5}
-            value={bio.body ?? ''}
-            onChange={(e) => setBio({ ...bio, body: e.target.value })}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-          />
+          <div className="border border-gray-300 rounded-lg overflow-hidden tiptap-editor focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500">
+            <div className="flex items-center gap-1 px-2 py-1.5 border-b border-gray-200 bg-gray-50">
+              <ToolbarBtn
+                onClick={() => editor?.chain().focus().toggleBold().run()}
+                active={editor?.isActive('bold') ?? false}
+                title="Bold"
+              >
+                <Bold size={14} />
+              </ToolbarBtn>
+              <ToolbarBtn
+                onClick={() => editor?.chain().focus().toggleItalic().run()}
+                active={editor?.isActive('italic') ?? false}
+                title="Italic"
+              >
+                <Italic size={14} />
+              </ToolbarBtn>
+              <div className="w-px h-4 bg-gray-300 mx-0.5" />
+              <ToolbarBtn
+                onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                active={editor?.isActive('bulletList') ?? false}
+                title="Bullet list"
+              >
+                <List size={14} />
+              </ToolbarBtn>
+              <ToolbarBtn
+                onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                active={editor?.isActive('orderedList') ?? false}
+                title="Ordered list"
+              >
+                <ListOrdered size={14} />
+              </ToolbarBtn>
+              <div className="w-px h-4 bg-gray-300 mx-0.5" />
+              <ToolbarBtn
+                onClick={handleLink}
+                active={editor?.isActive('link') ?? false}
+                title="Link"
+              >
+                <LinkIcon size={14} />
+              </ToolbarBtn>
+            </div>
+            <EditorContent editor={editor} />
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <button
@@ -69,5 +137,30 @@ export default function BioEditor() {
         </div>
       </div>
     </section>
+  )
+}
+
+function ToolbarBtn({
+  onClick,
+  active,
+  title,
+  children,
+}: {
+  onClick: () => void
+  active: boolean
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={`p-1.5 rounded transition-colors ${
+        active ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-200'
+      }`}
+    >
+      {children}
+    </button>
   )
 }
