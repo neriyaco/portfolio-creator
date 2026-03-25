@@ -6,8 +6,8 @@
   "scripts": {
     "build": "yarn --cwd public-app build && yarn --cwd admin-app build",
     "build:ci": "yarn --cwd public-app install && yarn --cwd admin-app install && yarn --cwd public-app build && yarn --cwd admin-app build",
-    "dev:public": "yarn --cwd public-app dev",
-    "dev:admin": "yarn --cwd admin-app dev",
+    "dev:public": "yarn --cwd public-app dev --host 0.0.0.0",
+    "dev:admin": "yarn --cwd admin-app dev --host 0.0.0.0",
     "dev": "concurrently \"yarn dev:public\" \"yarn dev:admin\""
   },
   "devDependencies": {

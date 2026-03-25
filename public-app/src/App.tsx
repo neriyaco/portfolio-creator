@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { TypesafeI18n, useI18n } from './i18n/i18n-react'
+import type { Locales } from './i18n/i18n-types'
 import { useConfig } from './hooks/useConfig'
 import LoadingSkeleton from './components/LoadingSkeleton'
 import ErrorState from './components/ErrorState'
@@ -7,6 +9,7 @@ import LogoSection from './components/LogoSection'
 import PhotoSection from './components/PhotoSection'
 import BioSection from './components/BioSection'
 import LinksSection from './components/LinksSection'
+import LanguageSwitcher from './components/LanguageSwitcher'
 import BlogListPage from './pages/BlogListPage'
 import BlogPostPage from './pages/BlogPostPage'
 import type { Theme, Seo } from './types'
@@ -46,6 +49,16 @@ function applySeo(seo: Seo | undefined, fallbackTitle: string | undefined, logoU
   if (logoUrl) setFavicon(logoUrl)
 }
 
+function I18nEffects() {
+  const { locale } = useI18n()
+  useEffect(() => {
+    document.documentElement.lang = locale
+    document.documentElement.dir = locale === 'he' ? 'rtl' : 'ltr'
+    localStorage.setItem('i18n-locale', locale)
+  }, [locale])
+  return null
+}
+
 function PortfolioPage() {
   const { config, loading, error } = useConfig()
 
@@ -64,19 +77,24 @@ function PortfolioPage() {
         <PhotoSection photo={config?.photo} />
         <BioSection bio={config?.bio} />
         <LinksSection links={config?.links} />
+        <LanguageSwitcher />
       </div>
     </main>
   )
 }
 
 export default function App() {
+  const initialLocale = (localStorage.getItem('i18n-locale') ?? 'en') as Locales
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<PortfolioPage />} />
-        <Route path="/blog" element={<BlogListPage />} />
-        <Route path="/blog/:slug" element={<BlogPostPage />} />
-      </Routes>
-    </BrowserRouter>
+    <TypesafeI18n locale={initialLocale}>
+      <I18nEffects />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<PortfolioPage />} />
+          <Route path="/blog" element={<BlogListPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
+        </Routes>
+      </BrowserRouter>
+    </TypesafeI18n>
   )
 }

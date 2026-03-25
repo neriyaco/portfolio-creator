@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useI18n } from '../i18n/i18n-react'
 import type { Post } from '../types'
 
 export default function BlogPostPage() {
@@ -8,6 +9,7 @@ export default function BlogPostPage() {
   const [post, setPost] = useState<Post | null>(null)
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
+  const { LL } = useI18n()
 
   useEffect(() => {
     if (!slug) return
@@ -48,8 +50,8 @@ export default function BlogPostPage() {
       <main className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="text-center">
           <p className="text-5xl font-bold text-gray-200 mb-4">404</p>
-          <p className="text-gray-500 mb-6">Post not found.</p>
-          <Link to="/blog" className="text-sm text-blue-600 hover:underline">← All posts</Link>
+          <p className="text-gray-500 mb-6">{LL.blog.notFound()}</p>
+          <Link to="/blog" className="text-sm text-blue-600 hover:underline">{LL.blog.backToBlog()}</Link>
         </div>
       </main>
     )
@@ -59,7 +61,7 @@ export default function BlogPostPage() {
     <main className="min-h-screen bg-white py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <Link to="/blog" className="text-sm text-gray-400 hover:text-gray-700 transition-colors">
-          ← All posts
+          {LL.blog.backToBlog()}
         </Link>
 
         {post.cover_url && (

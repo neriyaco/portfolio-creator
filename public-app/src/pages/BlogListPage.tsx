@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useI18n } from '../i18n/i18n-react'
 import type { Post } from '../types'
 
 export default function BlogListPage() {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
+  const { LL } = useI18n()
 
   useEffect(() => {
     supabase
@@ -24,10 +26,10 @@ export default function BlogListPage() {
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center justify-between mb-10">
           <Link to="/" className="text-sm text-gray-400 hover:text-gray-700 transition-colors">
-            ← Back to portfolio
+            {LL.blog.backToPortfolio()}
           </Link>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-10">Blog</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-10">{LL.blog.title()}</h1>
 
         {loading ? (
           <div className="flex flex-col gap-8">
@@ -41,7 +43,7 @@ export default function BlogListPage() {
             ))}
           </div>
         ) : posts.length === 0 ? (
-          <p className="text-gray-400">No posts yet.</p>
+          <p className="text-gray-400">{LL.blog.noPosts()}</p>
         ) : (
           <div className="flex flex-col gap-12">
             {posts.map((post) => (
@@ -76,7 +78,7 @@ export default function BlogListPage() {
                   to={`/blog/${post.slug}`}
                   className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
                 >
-                  Read more →
+                  {LL.blog.readMore()}
                 </Link>
               </article>
             ))}
