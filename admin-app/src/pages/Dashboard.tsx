@@ -7,6 +7,7 @@ import LinksEditor from '../components/editors/LinksEditor'
 import ThemeEditor from '../components/editors/ThemeEditor'
 import PhotoEditor from '../components/editors/PhotoEditor'
 import LogoEditor from '../components/editors/LogoEditor'
+import SeoEditor from '../components/editors/SeoEditor'
 
 function DashboardContent() {
   const navigate = useNavigate()
@@ -34,6 +35,7 @@ function DashboardContent() {
         <ThemeEditor />
         <PhotoEditor />
         <LogoEditor />
+        <SeoEditor />
       </main>
     </div>
   )

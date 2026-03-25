@@ -12,15 +12,17 @@ function resolveIcon(name?: string): React.ComponentType<{ size?: number }> {
 
 interface Props {
   link: SiteLink
+  onClick?: () => void
 }
 
-export default function LinkCard({ link }: Props) {
+export default function LinkCard({ link, onClick }: Props) {
   const Icon = resolveIcon(link.icon)
   return (
     <a
       href={link.url}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={onClick}
       className="flex items-center justify-center gap-3 w-full px-5 py-4 rounded-xl font-medium transition-opacity hover:opacity-80 shadow-sm"
       style={{ backgroundColor: link.color ?? 'var(--color-primary)', color: '#ffffff' }}
     >

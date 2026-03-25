@@ -94,3 +94,45 @@ CREATE POLICY portfolio_auth_write ON storage.objects
   FOR ALL TO authenticated
   USING (bucket_id = 'portfolio')
   WITH CHECK (bucket_id = 'portfolio');
+
+-- ============================================================
+-- Table: link_clicks  (analytics — one row per click event)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS link_clicks (
+  id         bigserial    PRIMARY KEY,
+  link_id    text         NOT NULL,
+  clicked_at timestamptz  NOT NULL DEFAULT now()
+);
+
+ALTER TABLE link_clicks ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'link_clicks' AND policyname = 'link_clicks_anon_insert'
+  ) THEN DROP POLICY link_clicks_anon_insert ON link_clicks; END IF;
+END $$;
+CREATE POLICY link_clicks_anon_insert ON link_clicks
+  FOR INSERT TO anon WITH CHECK (true);
+
+DO $$ BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_policies WHERE tablename = 'link_clicks' AND policyname = 'link_clicks_auth_select'
+  ) THEN DROP POLICY link_clicks_auth_select ON link_clicks; END IF;
+END $$;
+CREATE POLICY link_clicks_auth_select ON link_clicks
+  FOR SELECT TO authenticated USING (true);
+
+-- ============================================================
+-- RPC: get_link_click_counts
+-- Returns per-link click totals for the admin dashboard.
+-- ============================================================
+CREATE OR REPLACE FUNCTION get_link_click_counts()
+RETURNS TABLE(link_id text, count bigint)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT link_id, count(*)::bigint FROM link_clicks GROUP BY link_id;
+$$;
+
+GRANT EXECUTE ON FUNCTION get_link_click_counts() TO authenticated;

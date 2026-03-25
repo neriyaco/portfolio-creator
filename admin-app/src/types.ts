@@ -11,6 +11,8 @@ export interface SiteLink {
   icon: string
   color?: string
   visible: boolean
+  visibleFrom?: string
+  visibleUntil?: string
 }
 
 export interface Theme {
@@ -33,10 +35,16 @@ export interface Logo {
   maxHeight?: number
 }
 
+export interface Seo {
+  title?: string
+  description?: string
+}
+
 export interface SiteConfig {
   bio: Bio
   links: SiteLink[]
   theme: Theme
   photo: Photo
   logo: Logo
+  seo?: Seo
 }
