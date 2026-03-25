@@ -1,0 +1,4 @@
+# SPA routing: serve the correct index.html for each app
+# /admin/* must come before /* to take precedence
+/admin/* /admin/index.html 200
+/* /index.html 200
