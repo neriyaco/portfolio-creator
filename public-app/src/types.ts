@@ -9,6 +9,7 @@ export interface SiteLink {
   label: string
   url: string
   icon: string
+  color?: string
   visible: boolean
 }
 

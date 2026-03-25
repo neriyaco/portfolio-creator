@@ -78,6 +78,13 @@ export default function LinksEditor() {
                 />
                 Visible
               </label>
+              <input
+                type="color"
+                value={link.color ?? '#3b82f6'}
+                onChange={(e) => updateLink(link.id, { color: e.target.value })}
+                title="Button color"
+                className="w-8 h-8 rounded border border-gray-300 cursor-pointer p-0.5"
+              />
               <button
                 onClick={() => removeLink(link.id)}
                 className="p-1.5 text-red-400 hover:text-red-600 transition-colors"

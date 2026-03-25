@@ -80,7 +80,7 @@ export default function ThemeEditor() {
         {/* Live preview */}
         <div>
           <p className="text-sm font-medium mb-2 text-gray-500">Preview</p>
-          <ThemePreview theme={theme} />
+          <ThemePreview theme={theme} bio={config?.bio} links={config?.links} photo={config?.photo} />
         </div>
       </div>
     </section>

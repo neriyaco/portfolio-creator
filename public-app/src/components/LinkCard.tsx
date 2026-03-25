@@ -22,7 +22,7 @@ export default function LinkCard({ link }: Props) {
       target="_blank"
       rel="noopener noreferrer"
       className="flex items-center gap-3 w-full px-5 py-4 rounded-xl font-medium transition-opacity hover:opacity-80 shadow-sm"
-      style={{ backgroundColor: 'var(--color-primary)', color: '#ffffff' }}
+      style={{ backgroundColor: link.color ?? 'var(--color-primary)', color: '#ffffff' }}
     >
       <Icon size={20} />
       <span>{link.label}</span>
