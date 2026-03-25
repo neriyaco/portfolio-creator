@@ -10,7 +10,11 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.100.0",
+    "@tiptap/extension-color": "^3.20.5",
     "@tiptap/extension-link": "^3.20.5",
+    "@tiptap/extension-text-align": "^3.20.5",
+    "@tiptap/extension-text-style": "^3.20.5",
+    "@tiptap/extension-underline": "^3.20.5",
     "@tiptap/react": "^3.20.5",
     "@tiptap/starter-kit": "^3.20.5",
     "lucide-react": "^1.6.0",
