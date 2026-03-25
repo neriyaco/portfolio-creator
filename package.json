@@ -1,0 +1,10 @@
+{
+  "name": "portfolio-web",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "yarn --cwd public-app build && yarn --cwd admin-app build",
+    "dev:public": "yarn --cwd public-app dev",
+    "dev:admin": "yarn --cwd admin-app dev"
+  }
+}

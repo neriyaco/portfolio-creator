@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme custom properties — overridden at runtime by App.jsx once config loads */
+:root {
+  --color-primary: #3b82f6;
+  --color-background: #ffffff;
+  --color-text: #111827;
+  --font-family: system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-family);
+}
