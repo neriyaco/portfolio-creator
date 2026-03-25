@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useConfig } from './hooks/useConfig'
 import LoadingSkeleton from './components/LoadingSkeleton'
 import ErrorState from './components/ErrorState'
@@ -6,6 +7,8 @@ import LogoSection from './components/LogoSection'
 import PhotoSection from './components/PhotoSection'
 import BioSection from './components/BioSection'
 import LinksSection from './components/LinksSection'
+import BlogListPage from './pages/BlogListPage'
+import BlogPostPage from './pages/BlogPostPage'
 import type { Theme, Seo } from './types'
 
 function applyTheme(theme: Theme) {
@@ -18,31 +21,19 @@ function applyTheme(theme: Theme) {
 
 function setMetaName(name: string, content: string) {
   let el = document.querySelector<HTMLMetaElement>(`meta[name="${name}"]`)
-  if (!el) {
-    el = document.createElement('meta')
-    el.setAttribute('name', name)
-    document.head.appendChild(el)
-  }
+  if (!el) { el = document.createElement('meta'); el.setAttribute('name', name); document.head.appendChild(el) }
   el.content = content
 }
 
 function setMetaProperty(property: string, content: string) {
   let el = document.querySelector<HTMLMetaElement>(`meta[property="${property}"]`)
-  if (!el) {
-    el = document.createElement('meta')
-    el.setAttribute('property', property)
-    document.head.appendChild(el)
-  }
+  if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el) }
   el.content = content
 }
 
 function setFavicon(url: string) {
   let el = document.querySelector<HTMLLinkElement>('link[rel="icon"]')
-  if (!el) {
-    el = document.createElement('link')
-    el.rel = 'icon'
-    document.head.appendChild(el)
-  }
+  if (!el) { el = document.createElement('link'); el.rel = 'icon'; document.head.appendChild(el) }
   el.href = url
 }
 
@@ -55,7 +46,7 @@ function applySeo(seo: Seo | undefined, fallbackTitle: string | undefined, logoU
   if (logoUrl) setFavicon(logoUrl)
 }
 
-export default function App() {
+function PortfolioPage() {
   const { config, loading, error } = useConfig()
 
   useEffect(() => {
@@ -75,5 +66,17 @@ export default function App() {
         <LinksSection links={config?.links} />
       </div>
     </main>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<PortfolioPage />} />
+        <Route path="/blog" element={<BlogListPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }

@@ -1,7 +1,7 @@
 /**
  * /functions/admin/[[path]].js
  *
- * Cloudflare Pages Function — Auth Gate for /admin/*
+ * Cloudflare Pages Function — Auth Gate + SPA fallback for /admin/*
  *
  * UX gate only: prevents unauthenticated users from downloading the admin
  * JS bundle. Real security is enforced by Supabase RLS. No cryptographic
@@ -25,12 +25,9 @@ function hasValidSessionCookie(cookieHeader) {
     const name = cookie.slice(0, eqIdx).trim();
     const value = cookie.slice(eqIdx + 1).trim();
 
-    // Match Supabase v2 auth cookie names: sb-*-auth-token or sb-*-auth-token-0 etc.
     if (name.startsWith('sb-') && name.includes('-auth-token')) {
-      // Value may be URL-encoded JSON — check for JWT shape directly or inside JSON
       try {
         const decoded = decodeURIComponent(value);
-        // Chunk 0 or only chunk contains the access_token
         if (decoded.startsWith('{')) {
           const parsed = JSON.parse(decoded);
           if (parsed.access_token && JWT_SHAPE.test(parsed.access_token)) {
@@ -40,30 +37,41 @@ function hasValidSessionCookie(cookieHeader) {
           return true;
         }
       } catch {
-        // If decoding/parsing fails, fall through to next cookie
+        // fall through
       }
     }
   }
   return false;
 }
 
+/**
+ * Serve dist/admin/index.html directly via ASSETS binding.
+ * This is the SPA shell — React Router handles client-side routing.
+ */
+function serveAdminIndex(env, request) {
+  const indexUrl = new URL('/admin/index.html', request.url);
+  return env.ASSETS.fetch(new Request(indexUrl.toString(), { method: 'GET', headers: request.headers }));
+}
+
 export async function onRequest(context) {
-  const { request, next } = context;
+  const { request, next, env } = context;
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // Always allow the login page through to prevent redirect loops
+  // Login page: no auth check needed, but still needs SPA fallback
   if (pathname === '/admin/login' || pathname === '/admin/login/') {
-    return next();
+    const response = await next();
+    return response.status === 404 ? serveAdminIndex(env, request) : response;
   }
 
-  // Also allow static assets that the login page needs
-  // (Cloudflare serves these directly, but belt-and-suspenders)
+  // All other /admin/* routes require a valid session
   const cookieHeader = request.headers.get('Cookie');
-  if (hasValidSessionCookie(cookieHeader)) {
-    return next();
+  if (!hasValidSessionCookie(cookieHeader)) {
+    return Response.redirect(new URL('/admin/login', request.url).toString(), 302);
   }
 
-  // No valid session — redirect to login
-  return Response.redirect(new URL('/admin/login', request.url).toString(), 302);
+  // Serve the static asset (JS chunks, CSS, images, etc.)
+  // If not found (i.e. a client-side route like /admin/posts/123), serve the SPA shell
+  const response = await next();
+  return response.status === 404 ? serveAdminIndex(env, request) : response;
 }

@@ -136,3 +136,51 @@ AS $$
 $$;
 
 GRANT EXECUTE ON FUNCTION get_link_click_counts() TO authenticated;
+
+-- ============================================================
+-- Table: posts  (blog posts)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS posts (
+  id           uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  slug         text        NOT NULL UNIQUE,
+  title        text        NOT NULL DEFAULT '',
+  excerpt      text        NOT NULL DEFAULT '',
+  content      text        NOT NULL DEFAULT '',
+  cover_url    text,
+  published    boolean     NOT NULL DEFAULT false,
+  published_at timestamptz,
+  created_at   timestamptz NOT NULL DEFAULT now(),
+  updated_at   timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE posts ENABLE ROW LEVEL SECURITY;
+
+-- anon can read published posts only
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'posts' AND policyname = 'posts_anon_select')
+  THEN DROP POLICY posts_anon_select ON posts; END IF;
+END $$;
+CREATE POLICY posts_anon_select ON posts
+  FOR SELECT TO anon USING (published = true);
+
+-- authenticated can do everything
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'posts' AND policyname = 'posts_auth_all')
+  THEN DROP POLICY posts_auth_all ON posts; END IF;
+END $$;
+CREATE POLICY posts_auth_all ON posts
+  FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
+-- Trigger: keep updated_at current
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS posts_set_updated_at ON posts;
+CREATE TRIGGER posts_set_updated_at
+  BEFORE UPDATE ON posts
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
