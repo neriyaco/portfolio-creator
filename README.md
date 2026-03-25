@@ -73,26 +73,44 @@ VITE_SUPABASE_ANON_KEY=eyJ...
 
 ### Connect the repository
 
-1. Cloudflare dashboard → Pages → Create a project → Connect to Git
-2. Select this repository
+1. Cloudflare dashboard → **Workers & Pages** (left sidebar)
+2. Click **Create**
+3. On the "Create an application" screen, select the **Pages** tab (not Workers)
+4. Click **Connect to Git**
+5. Authorise GitHub/GitLab if prompted, then select this repository
+6. Click **Begin setup**
 
 ### Build settings
 
+These settings go into the **Build settings** step of the Pages project wizard, and can also be changed later under **Settings → Builds & deployments**.
+
 | Setting | Value |
 |---|---|
-| Build command | `yarn build` |
-| Build output directory | `dist` |
-| Root directory | `/` (leave blank) |
+| **Framework preset** | `None` |
+| **Build command** | `yarn build:ci` |
+| **Deploy command** | *(leave blank — Cloudflare Pages deploys the build output automatically)* |
+| **Build output directory** | `dist` |
+| **Root directory** | *(leave blank)* |
+
+> **Why `yarn build:ci` and not `yarn build`?**
+> Cloudflare Pages only runs `yarn install` at the repository root, which does not install dependencies inside `public-app/` or `admin-app/`. The `build:ci` script installs each workspace's dependencies first, then builds both apps.
 
 ### Environment variables
 
-Add the following in Cloudflare Pages → Settings → Environment variables (Production + Preview):
+In **Settings → Environment variables**, add the following for both **Production** and **Preview** environments:
 
-| Variable | Value |
-|---|---|
-| `VITE_SUPABASE_URL` | Your Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Your Supabase anon/public key |
-| `SUPABASE_URL` | Your Supabase project URL (used by the media CF Function at runtime) |
+| Variable | Where it's used | Value |
+|---|---|---|
+| `VITE_SUPABASE_URL` | Build-time (both apps) | Your Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Build-time (both apps) | Your Supabase anon/public key |
+| `SUPABASE_URL` | Runtime (media CF Function) | Your Supabase project URL |
+| `NODE_VERSION` | Build environment | `18` |
+
+> `NODE_VERSION` pins the Node.js version used during the Cloudflare build. Without it Cloudflare may default to an older version.
+
+### Deploy
+
+Push to your connected branch (typically `main`). Cloudflare Pages will automatically build and deploy. You can also trigger a manual deploy from the Pages dashboard.
 
 ---
 
