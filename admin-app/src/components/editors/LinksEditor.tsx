@@ -46,51 +46,50 @@ export default function LinksEditor() {
       <h2 className="text-lg font-semibold mb-4 text-gray-800">Links</h2>
       <div className="flex flex-col gap-3 mb-4">
         {links.map((link) => (
-          <div
-            key={link.id}
-            className="grid grid-cols-[1fr_1fr_7rem_auto_auto] gap-2 items-center"
-          >
+          <div key={link.id} className="flex flex-col gap-2 p-3 rounded-lg border border-gray-200 sm:flex-row sm:items-center sm:border-0 sm:p-0 sm:gap-2">
             <input
               type="text"
               placeholder="Label"
               value={link.label}
               onChange={(e) => updateLink(link.id, { label: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="url"
               placeholder="https://…"
               value={link.url}
               onChange={(e) => updateLink(link.id, { url: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <input
               type="text"
-              placeholder="Icon name"
+              placeholder="Icon (e.g. Github)"
               value={link.icon}
               onChange={(e) => updateLink(link.id, { icon: e.target.value })}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="sm:w-32 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <label className="flex items-center gap-1 text-sm text-gray-600 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={link.visible}
-                onChange={(e) => updateLink(link.id, { visible: e.target.checked })}
-                className="rounded"
-              />
-              Visible
-            </label>
-            <button
-              onClick={() => removeLink(link.id)}
-              className="p-1.5 text-red-400 hover:text-red-600 transition-colors"
-              aria-label="Delete link"
-            >
-              <Trash2 size={16} />
-            </button>
+            <div className="flex items-center justify-between sm:justify-start gap-3">
+              <label className="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={link.visible}
+                  onChange={(e) => updateLink(link.id, { visible: e.target.checked })}
+                  className="rounded"
+                />
+                Visible
+              </label>
+              <button
+                onClick={() => removeLink(link.id)}
+                className="p-1.5 text-red-400 hover:text-red-600 transition-colors"
+                aria-label="Delete link"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
           </div>
         ))}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <button
           onClick={addLink}
           className="flex items-center gap-1.5 px-3 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"

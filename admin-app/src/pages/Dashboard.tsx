@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom'
 import { LogOut } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { ConfigProvider } from '../context/ConfigContext'
 import BioEditor from '../components/editors/BioEditor'
 import LinksEditor from '../components/editors/LinksEditor'
 import ThemeEditor from '../components/editors/ThemeEditor'
 import PhotoEditor from '../components/editors/PhotoEditor'
+import LogoEditor from '../components/editors/LogoEditor'
 
-export default function Dashboard() {
+function DashboardContent() {
   const navigate = useNavigate()
 
   async function handleLogout() {
@@ -16,7 +18,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-800">Portfolio Admin</h1>
         <button
           onClick={handleLogout}
@@ -31,7 +33,16 @@ export default function Dashboard() {
         <LinksEditor />
         <ThemeEditor />
         <PhotoEditor />
+        <LogoEditor />
       </main>
     </div>
+  )
+}
+
+export default function Dashboard() {
+  return (
+    <ConfigProvider>
+      <DashboardContent />
+    </ConfigProvider>
   )
 }

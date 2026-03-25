@@ -37,9 +37,28 @@ CREATE POLICY auth_all ON config
 INSERT INTO config (id, data)
 VALUES (
   1,
-  '{"bio":{},"links":[],"theme":{},"photo":{}}'::jsonb
+  '{"bio":{},"links":[],"theme":{},"photo":{},"logo":{}}'::jsonb
 )
 ON CONFLICT (id) DO NOTHING;
+
+-- ============================================================
+-- RPC: update_config_section
+-- Atomically merges one top-level key into data without
+-- overwriting sibling keys. Safe for concurrent saves.
+-- ============================================================
+CREATE OR REPLACE FUNCTION update_config_section(section_key text, section_value jsonb)
+RETURNS jsonb
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  UPDATE config
+  SET data = data || jsonb_build_object(section_key, section_value)
+  WHERE id = 1
+  RETURNING data;
+$$;
+
+GRANT EXECUTE ON FUNCTION update_config_section(text, jsonb) TO authenticated;
 
 -- ============================================================
 -- Storage: portfolio bucket

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useConfig } from './hooks/useConfig'
 import LoadingSkeleton from './components/LoadingSkeleton'
 import ErrorState from './components/ErrorState'
+import LogoSection from './components/LogoSection'
 import PhotoSection from './components/PhotoSection'
 import BioSection from './components/BioSection'
 import LinksSection from './components/LinksSection'
@@ -26,8 +27,9 @@ export default function App() {
   if (error) return <ErrorState message={error} />
 
   return (
-    <main className="min-h-screen flex flex-col items-center py-12 px-4">
-      <div className="w-full max-w-lg flex flex-col items-center">
+    <main className="min-h-screen flex flex-col items-center py-10 px-4 sm:py-16">
+      <div className="w-full max-w-md flex flex-col items-center">
+        <LogoSection logo={config?.logo} />
         <PhotoSection photo={config?.photo} />
         <BioSection bio={config?.bio} />
         <LinksSection links={config?.links} />
