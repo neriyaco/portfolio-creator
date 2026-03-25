@@ -12,7 +12,7 @@ import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough,
   AlignLeft, AlignCenter, AlignRight,
   List, ListOrdered, Link as LinkIcon, Palette,
-  ImageIcon, ArrowLeft, Eye, EyeOff,
+  ImageIcon, ArrowLeft, Eye, EyeOff, Save,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import type { Post } from '../types'
@@ -192,20 +192,23 @@ export default function PostEditorPage() {
           <button
             onClick={() => handleSave()}
             disabled={status === 'saving'}
-            className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
+            className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
           >
-            Save draft
+            <Save size={14} className="shrink-0" />
+            <span className="hidden sm:inline">Save draft</span>
           </button>
           <button
             onClick={() => handleSave(true)}
             disabled={status === 'saving'}
-            className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 ${
+            className={`flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 ${
               published
                 ? 'bg-amber-500 hover:bg-amber-600 text-white'
                 : 'bg-blue-600 hover:bg-blue-700 text-white'
             }`}
           >
-            {published ? <><EyeOff size={14} /> Unpublish</> : <><Eye size={14} /> Publish</>}
+            {published
+              ? <><EyeOff size={14} className="shrink-0" /><span className="hidden sm:inline">Unpublish</span></>
+              : <><Eye size={14} className="shrink-0" /><span className="hidden sm:inline">Publish</span></>}
           </button>
         </div>
       </header>
@@ -346,7 +349,7 @@ function Btn({ onClick, active, title, children }: {
       type="button"
       onClick={onClick}
       title={title}
-      className={`p-1.5 rounded transition-colors ${active ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-200'}`}
+      className={`p-2 rounded transition-colors ${active ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:bg-gray-200'}`}
     >
       {children}
     </button>

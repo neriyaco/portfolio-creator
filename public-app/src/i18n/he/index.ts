@@ -8,6 +8,8 @@ const he: Translations = {
     readMore: 'קרא עוד ←',
     noPosts: 'אין פוסטים עדיין.',
     notFound: 'הפוסט לא נמצא.',
+    recentPosts: 'פוסטים אחרונים',
+    viewAll: '← כל הפוסטים',
   },
   error: {
     somethingWentWrong: 'משהו השתבש',

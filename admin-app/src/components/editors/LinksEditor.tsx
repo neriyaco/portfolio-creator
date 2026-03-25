@@ -27,12 +27,13 @@ function SortableLinkRow({ link, clickCount, primaryColor, onUpdate, onRemove }:
 
   return (
     <div ref={setNodeRef} style={style} className="flex flex-col gap-2 p-3 rounded-lg border border-gray-200 bg-white">
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Row 1: drag handle + label + URL */}
+      <div className="flex items-center gap-2">
         <button
           {...listeners}
           {...attributes}
           type="button"
-          className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 touch-none shrink-0"
+          className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 touch-none shrink-0 p-1"
           aria-label="Drag to reorder"
         >
           <GripVertical size={16} />
@@ -42,15 +43,18 @@ function SortableLinkRow({ link, clickCount, primaryColor, onUpdate, onRemove }:
           placeholder="Label"
           value={link.label}
           onChange={(e) => onUpdate(link.id, { label: e.target.value })}
-          className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-2/5 min-w-0 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <input
           type="url"
           placeholder="https://…"
           value={link.url}
           onChange={(e) => onUpdate(link.id, { url: e.target.value })}
-          className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+      </div>
+      {/* Row 2: icon + visible + color + actions */}
+      <div className="flex items-center gap-2 pl-8">
         <input
           type="text"
           placeholder="Icon"
@@ -58,12 +62,12 @@ function SortableLinkRow({ link, clickCount, primaryColor, onUpdate, onRemove }:
           onChange={(e) => onUpdate(link.id, { icon: e.target.value })}
           className="w-24 shrink-0 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <label className="flex items-center gap-1 text-sm text-gray-600 cursor-pointer select-none shrink-0">
+        <label className="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer select-none shrink-0">
           <input
             type="checkbox"
             checked={link.visible}
             onChange={(e) => onUpdate(link.id, { visible: e.target.checked })}
-            className="rounded"
+            className="w-4 h-4 rounded"
           />
           Visible
         </label>
@@ -75,36 +79,38 @@ function SortableLinkRow({ link, clickCount, primaryColor, onUpdate, onRemove }:
           className="w-8 h-8 shrink-0 rounded border border-gray-300 cursor-pointer p-0.5"
         />
         {clickCount > 0 && (
-          <span className="text-xs text-gray-500 bg-gray-100 rounded px-1.5 py-0.5 shrink-0" title={`${clickCount} clicks`}>
+          <span className="text-xs text-gray-500 bg-gray-100 rounded px-1.5 py-0.5 shrink-0">
             {clickCount} clicks
           </span>
         )}
-        <button
-          type="button"
-          onClick={() => setShowSchedule((s) => !s)}
-          title="Schedule visibility"
-          className={`p-1.5 rounded transition-colors shrink-0 ${showSchedule ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
-        >
-          <Calendar size={15} />
-        </button>
-        <button
-          type="button"
-          onClick={() => onRemove(link.id)}
-          className="p-1.5 text-red-400 hover:text-red-600 transition-colors shrink-0"
-          aria-label="Delete link"
-        >
-          <Trash2 size={15} />
-        </button>
+        <div className="ml-auto flex items-center gap-1 shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowSchedule((s) => !s)}
+            title="Schedule visibility"
+            className={`p-2 rounded transition-colors ${showSchedule ? 'text-blue-600 bg-blue-50' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
+          >
+            <Calendar size={15} />
+          </button>
+          <button
+            type="button"
+            onClick={() => onRemove(link.id)}
+            className="p-2 text-red-400 hover:text-red-600 transition-colors"
+            aria-label="Delete link"
+          >
+            <Trash2 size={15} />
+          </button>
+        </div>
       </div>
       {showSchedule && (
-        <div className="flex flex-wrap items-center gap-3 pl-7">
+        <div className="flex flex-wrap items-center gap-3 pl-8">
           <label className="flex items-center gap-1.5 text-xs text-gray-600">
             Show from
             <input
               type="date"
               value={link.visibleFrom ? link.visibleFrom.slice(0, 10) : ''}
               onChange={(e) => onUpdate(link.id, { visibleFrom: e.target.value || undefined })}
-              className="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </label>
           <label className="flex items-center gap-1.5 text-xs text-gray-600">
@@ -113,7 +119,7 @@ function SortableLinkRow({ link, clickCount, primaryColor, onUpdate, onRemove }:
               type="date"
               value={link.visibleUntil ? link.visibleUntil.slice(0, 10) : ''}
               onChange={(e) => onUpdate(link.id, { visibleUntil: e.target.value || undefined })}
-              className="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </label>
         </div>

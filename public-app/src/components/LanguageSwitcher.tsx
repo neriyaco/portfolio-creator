@@ -6,12 +6,22 @@ const LOCALES: { code: Locales; label: string }[] = [
   { code: 'he', label: 'עב' },
 ]
 
-export default function LanguageSwitcher() {
+interface Props {
+  availableLocales?: string[]
+}
+
+export default function LanguageSwitcher({ availableLocales }: Props) {
   const { locale, setLocale } = useI18n()
+
+  const visible = availableLocales
+    ? LOCALES.filter((l) => availableLocales.includes(l.code))
+    : LOCALES
+
+  if (visible.length <= 1) return null
 
   return (
     <div className="flex items-center gap-0.5 text-xs mt-6">
-      {LOCALES.map((l, i) => (
+      {visible.map((l, i) => (
         <span key={l.code} className="flex items-center gap-0.5">
           {i > 0 && <span className="text-gray-200 select-none px-0.5">|</span>}
           <button

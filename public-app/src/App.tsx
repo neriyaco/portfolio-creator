@@ -9,6 +9,7 @@ import LogoSection from './components/LogoSection'
 import PhotoSection from './components/PhotoSection'
 import BioSection from './components/BioSection'
 import LinksSection from './components/LinksSection'
+import RecentPostsSection from './components/RecentPostsSection'
 import LanguageSwitcher from './components/LanguageSwitcher'
 import BlogListPage from './pages/BlogListPage'
 import BlogPostPage from './pages/BlogPostPage'
@@ -61,11 +62,18 @@ function I18nEffects() {
 
 function PortfolioPage() {
   const { config, loading, error } = useConfig()
+  const { setLocale } = useI18n()
 
   useEffect(() => {
     if (config?.theme) applyTheme(config.theme)
     applySeo(config?.seo, config?.bio?.name, config?.logo?.url)
   }, [config])
+
+  useEffect(() => {
+    if (config?.locales?.default && !localStorage.getItem('i18n-locale')) {
+      setLocale(config.locales.default as Locales)
+    }
+  }, [config, setLocale])
 
   if (loading) return <LoadingSkeleton />
   if (error) return <ErrorState message={error} />
@@ -77,7 +85,8 @@ function PortfolioPage() {
         <PhotoSection photo={config?.photo} />
         <BioSection bio={config?.bio} />
         <LinksSection links={config?.links} />
-        <LanguageSwitcher />
+        <RecentPostsSection />
+        <LanguageSwitcher availableLocales={config?.locales?.available} />
       </div>
     </main>
   )

@@ -40,6 +40,11 @@ export interface Seo {
   description?: string
 }
 
+export interface SiteLocales {
+  available: string[]
+  default: string
+}
+
 export interface SiteConfig {
   bio: Bio
   links: SiteLink[]
@@ -47,6 +52,7 @@ export interface SiteConfig {
   photo: Photo
   logo: Logo
   seo?: Seo
+  locales?: SiteLocales
 }
 
 export interface Post {

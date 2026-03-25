@@ -6,9 +6,9 @@
  * UX gate only: prevents unauthenticated users from downloading the admin
  * JS bundle. Real security is enforced by Supabase RLS.
  *
- * SPA routing is handled by _redirects (/admin/* → /admin/index.html 200).
- * next() passes through the full CF Pages asset pipeline (static files +
- * _redirects), so there is no need to call env.ASSETS.fetch() directly.
+ * next() only resolves exact static file matches — it does NOT process
+ * _redirects. For SPA routes we must explicitly serve /admin/index.html
+ * via env.ASSETS.fetch().
  *
  * Supabase JS v2 stores the session in localStorage AND sets cookies named:
  *   sb-<project-ref>-auth-token  (chunked: -0, -1, …)
@@ -45,15 +45,23 @@ function hasValidSessionCookie(cookieHeader) {
   return false;
 }
 
+function serveShell(request, env) {
+  return env.ASSETS.fetch(new URL('/admin/index.html', request.url).toString());
+}
+
 export async function onRequest(context) {
-  const { request, next } = context;
+  const { request, next, env } = context;
   const url = new URL(request.url);
   const pathname = url.pathname;
 
-  // Login page: allow through without auth check.
-  // _redirects serves /admin/index.html (SPA shell) since no static file exists.
-  if (pathname === '/admin/login' || pathname === '/admin/login/') {
+  // Static assets (hashed JS/CSS/fonts/images): serve directly via next()
+  if (/\.(js|css|ico|png|jpe?g|gif|svg|woff2?|ttf|eot|map)(\?.*)?$/.test(pathname)) {
     return next();
+  }
+
+  // Login page is public — serve SPA shell without auth check
+  if (pathname === '/admin/login' || pathname === '/admin/login/') {
+    return serveShell(request, env);
   }
 
   // All other /admin/* routes require a valid session cookie
@@ -62,9 +70,6 @@ export async function onRequest(context) {
     return Response.redirect(new URL('/admin/login', request.url).toString(), 302);
   }
 
-  // Authenticated: let the CF Pages asset pipeline handle the rest.
-  // Static assets (.js/.css/etc.) are served directly.
-  // Unknown SPA routes fall through to _redirects → /admin/index.html 200.
-  return next();
+  // Authenticated: serve SPA shell for all non-asset routes
+  return serveShell(request, env);
 }
-

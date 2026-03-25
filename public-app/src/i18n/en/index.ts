@@ -6,6 +6,8 @@ const en = {
     readMore: 'Read more →',
     noPosts: 'No posts yet.',
     notFound: 'Post not found.',
+    recentPosts: 'Recent Posts',
+    viewAll: 'View all posts →',
   },
   error: {
     somethingWentWrong: 'Something went wrong',
