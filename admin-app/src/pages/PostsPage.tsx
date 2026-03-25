@@ -33,14 +33,14 @@ export default function PostsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center gap-4">
-        <h1 className="text-xl font-bold text-gray-800 mr-4">Portfolio Admin</h1>
+      <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 flex items-center gap-3">
+        <h1 className="hidden sm:block text-xl font-bold text-gray-800 mr-2">Portfolio Admin</h1>
         <nav className="flex items-center gap-1 flex-1">
           <NavLink
             to="/"
             end
             className={({ isActive }) =>
-              `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`
+              `px-2 sm:px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`
             }
           >
             Settings
@@ -48,7 +48,7 @@ export default function PostsPage() {
           <NavLink
             to="/posts"
             className={({ isActive }) =>
-              `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`
+              `px-2 sm:px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100'}`
             }
           >
             Blog
@@ -56,14 +56,14 @@ export default function PostsPage() {
         </nav>
         <button
           onClick={handleLogout}
-          className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors p-1.5 rounded-lg hover:bg-gray-100"
         >
           <LogOut size={16} />
-          Logout
+          <span className="hidden sm:inline">Logout</span>
         </button>
       </header>
 
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <main className="max-w-3xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-gray-800">Blog Posts</h2>
           <Link
